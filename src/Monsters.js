@@ -14,28 +14,43 @@ const Monsters = () => {
             const { data } = await axios.get(
                 "https://jsonplaceholder.typicode.com/users"
             );
+
+            data.map(
+                (e) =>
+                    (e.image = `https://robohash.org/${e.id}?set=set2&size=180x180`)
+            );
+
             setMonsters(data);
             setCopy(data);
         };
         fetch();
     }, []);
 
+    console.log(copy);
     const handleInputChange = (e) => {
         setSearchTerm(e.target.value);
     };
 
     useEffect(() => {
         setMonsters(
-            copy.filter((e) =>
-                e.name.toLowerCase().includes(searchTerm.toLowerCase())
+            copy.filter(
+                (e) =>
+                    e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    e.phone.includes(searchTerm) ||
+                    e.email.toLowerCase().includes(searchTerm.toLowerCase())
             )
         );
-    }, [searchTerm]);
+    }, [searchTerm, copy]);
 
     return (
         <Container>
-            <Title>몬스터를 검색하세요!</Title>
-            <Search placeholder="검색 ..." onChange={handleInputChange} />
+            <FixedWrap>
+                <Title>연락처</Title>
+                <Search
+                    placeholder="이름, 연락처, 이메일 검색"
+                    onChange={handleInputChange}
+                />
+            </FixedWrap>
             <CardList item={monsters} />
         </Container>
     );
@@ -48,10 +63,16 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     background-color: aliceblue;
-    width: 100vw;
-    height: 100vh;
+    height: 1600px;
     text-align: center;
     padding: 10px;
+`;
+
+const FixedWrap = styled.div`
+    position: fixed;
+    background-color: aliceblue;
+    top: 0;
+    width: 100%;
 `;
 
 const Title = styled.h1`
@@ -61,10 +82,15 @@ const Title = styled.h1`
 const Search = styled.input`
     all: unset;
     background-color: white;
-    width: 500px;
+    width: 90%;
     height: 50px;
+    font-size: 25px;
     margin-bottom: 40px;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
         rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+
+    ::placeholder {
+        font-size: 16px;
+    }
 `;
